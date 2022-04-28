@@ -158,7 +158,7 @@ void YoloObjectDetector::init() {
 
 void YoloObjectDetector::cameraCallback(const sensor_msgs::ImageConstPtr& msg) {
   ROS_DEBUG("[YoloObjectDetector] USB image received.");
-
+  
   cv_bridge::CvImagePtr cam_image;
 
   try {
@@ -302,6 +302,8 @@ detection* YoloObjectDetector::avgPredictions(network* net, int* nboxes) {
 }
 
 void* YoloObjectDetector::detectInThread() {
+  ros::Rate rate(0.05);
+
   running_ = 1;
   float nms = .4;
 
@@ -373,6 +375,7 @@ void* YoloObjectDetector::detectInThread() {
   free_detections(dets, nboxes);
   demoIndex_ = (demoIndex_ + 1) % demoFrame_;
   running_ = 0;
+  rate.sleep();
   return 0;
 }
 
